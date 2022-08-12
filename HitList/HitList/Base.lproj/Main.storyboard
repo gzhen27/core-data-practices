@@ -31,7 +31,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="s4w-k6-8Yx">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="plus" catalog="system" id="bhZ-X4-9mQ"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="plus" catalog="system" id="bhZ-X4-9mQ">
+                            <connections>
+                                <action selector="addName:" destination="BYZ-38-t0r" id="98e-TF-eb6"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="XzQ-Gz-Cs4" id="5EA-XG-vmU"/>

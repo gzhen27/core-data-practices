@@ -19,17 +19,29 @@ class ViewController: UIViewController {
         }
     }
     
-    // MARK: - Actions
-    @IBAction func addName(_ sender: UIBarButtonItem) {
-        
-    }
-    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "The List"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+    }
+    
+    // MARK: - Actions
+    @IBAction func addName(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "New Name", message: "Add a new name", preferredStyle: .alert)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [unowned self] action in
+            guard let textField = alert.textFields?.first,
+                  let nameToSave = textField.text else { return }
+            
+            self.names.append(nameToSave)
+            self.tableView.reloadData()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addTextField()
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 
 
