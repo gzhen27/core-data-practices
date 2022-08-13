@@ -11,7 +11,11 @@ import CoreData
 class ViewController: UIViewController {
     
     // MARK: - Properties
-    var people: [NSManagedObject] = []
+    var people: [NSManagedObject] = [] {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
 
     // MARK: - Outlets
     @IBOutlet weak var tableView: UITableView! {
@@ -28,6 +32,21 @@ class ViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchReqest = NSFetchRequest<NSManagedObject>(entityName: "Person")
+        
+        do {
+            people = try managedContext.fetch(fetchReqest)
+        } catch let err as NSError {
+            print("Colud not fetch. \(err), \(err.userInfo)")
+        }
+    }
+    
     // MARK: - Actions
     @IBAction func addName(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "New Name", message: "Add a new name", preferredStyle: .alert)
@@ -36,7 +55,6 @@ class ViewController: UIViewController {
                   let nameToSave = textField.text else { return }
             
             self.save(name: nameToSave)
-            self.tableView.reloadData()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addTextField()
