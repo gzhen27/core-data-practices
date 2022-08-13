@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController {
     
     // MARK: - Properties
-    var names: [String] = []
+    var people: [NSManagedObject] = []
 
     // MARK: - Outlets
     @IBOutlet weak var tableView: UITableView! {
@@ -34,7 +35,7 @@ class ViewController: UIViewController {
             guard let textField = alert.textFields?.first,
                   let nameToSave = textField.text else { return }
             
-            self.names.append(nameToSave)
+            self.save(name: nameToSave)
             self.tableView.reloadData()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -44,21 +45,37 @@ class ViewController: UIViewController {
         present(alert, animated: true)
     }
 
-
+    private func save(name: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "Person", in: managedContext)!
+        let person = NSManagedObject(entity: entity, insertInto: managedContext)
+        
+        person.setValue(name, forKey: "name")
+        
+        do {
+            try managedContext.save()
+            people.append(person)
+        } catch let err as NSError {
+            print("Could not save. \(err), \(err.userInfo)")
+        }
+    }
 }
 
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let person = people[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         var content = cell.defaultContentConfiguration()
-        content.text = names[indexPath.row]
+        content.text = person.value(forKey: "name") as? String
         cell.contentConfiguration = content
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return names.count
+        return people.count
     }
     
 }
