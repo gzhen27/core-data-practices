@@ -1,2 +1,3 @@
 # hit-list
-A iOS app mainly focus on Core Data.
+A iOS app mainly focus on the basics that how to use Core Data.
+
